@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Generation {
+  id             String          @id @default(cuid())
+  artistName     String
+  eventName      String
+  eventType      String
+  location       String
+  city           String
+  eventDate      String
+  eventTime      String
+  musicStyle     String
+  mood           String
+  targetAudience String
+  language       String
+  toneOfVoice    String
+  selectedTopic  String?
+  status         String          @default("draft")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  outputPath     String?
+  ideas          GeneratedIdea[]
+  slides         GeneratedSlide[]
+  texts          GeneratedText[]
+}
+
+model GeneratedIdea {
+  id               String     @id @default(cuid())
+  generationId     String
+  title            String
+  shortDescription String
+  generation       Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+}
+
+model GeneratedSlide {
+  id             String     @id @default(cuid())
+  generationId   String
+  type           String
+  slideNumber    Int
+  title          String
+  subtitle       String?
+  body           String
+  cta            String?
+  imagePrompt    String?
+  finalImagePath String?
+  generation     Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+}
+
+model GeneratedText {
+  id           String     @id @default(cuid())
+  generationId String
+  type         String
+  content      String
+  generation   Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+}
+
+model BrandAsset {
+  id       String @id @default(cuid())
+  type     String
+  name     String
+  path     String @unique
+  metadata String?
+}

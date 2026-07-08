@@ -10,11 +10,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const payload = selectIdeaSchema.parse(await request.json());
     const generation = await getGenerationOrThrow(id);
     const findIdeaBy = (predicate: (item: GenerationWithRelations["ideas"][number]) => boolean) =>
-  findIdeaBy((item) => ...)
-  const idea =
-  payload.ideaId === "__selected__"
-    ? findIdeaBy((item) => item.title === generation.selectedTopic) ?? generation.ideas[0]
-    : findIdeaBy((item) => item.id === payload.ideaId);
+      generation.ideas.find(predicate);
+    const idea =
+      payload.ideaId === "__selected__"
+        ? findIdeaBy((item) => item.title === generation.selectedTopic) ?? generation.ideas[0]
+        : findIdeaBy((item) => item.id === payload.ideaId);
 
     if (!idea) {
       return NextResponse.json({ message: "Selected idea was not found." }, { status: 404 });
@@ -41,6 +41,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       }
     );
 
+    await saveGeneratedContent(generation.id, draft);
+
+    return NextResponse.json({ id: generation.id });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unable to generate content.";
+    return NextResponse.json({ message }, { status: 400 });
+  }
+}
     await saveGeneratedContent(generation.id, draft);
 
     return NextResponse.json({ id: generation.id });

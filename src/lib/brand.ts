@@ -1,6 +1,3 @@
-import fs from "node:fs/promises";
-import { BRAND_CONFIG_PATH } from "@/lib/constants";
-import { resolveProjectPath } from "@/lib/fs-utils";
 import type { BrandConfig } from "@/lib/types";
 
 const defaultBrandConfig: BrandConfig = {
@@ -41,11 +38,5 @@ export async function ensureBrandConfig() {
 }
 
 export async function getBrandConfig() {
-  try {
-    const configPath = resolveProjectPath(BRAND_CONFIG_PATH);
-    const content = await fs.readFile(configPath, "utf8");
-    return JSON.parse(content) as BrandConfig;
-  } catch {
-    return defaultBrandConfig;
-  }
+  return defaultBrandConfig;
 }

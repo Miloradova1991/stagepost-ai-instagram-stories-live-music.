@@ -10,7 +10,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const payload = selectIdeaSchema.parse(await request.json());
     const generation = await getGenerationOrThrow(id);
     const findIdeaBy = (predicate: (item: GenerationWithRelations["ideas"][number]) => boolean) =>
-  generation.ideas.find(predicate);
+  findIdeaBy((item) => ...)
   const idea =
   payload.ideaId === "__selected__"
     ? findIdeaBy((item) => item.title === generation.selectedTopic) ?? generation.ideas[0]

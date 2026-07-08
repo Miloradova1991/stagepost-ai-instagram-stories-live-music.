@@ -2,17 +2,38 @@ import { ApiKeyForm } from "@/components/api-key-form";
 import { AppShell } from "@/components/app-shell";
 import { EventForm } from "@/components/event-form";
 import { SectionCard } from "@/components/section-card";
-import { getBrandConfig } from "@/lib/brand";
 import { canPersistApiKeyLocally, usesRemoteAssets } from "@/lib/runtime";
 import { readLocalSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
+const deployedBrand = {
+  name: "StagePost AI",
+  visualStyle:
+    "Bold concert-night editorial mixed with clean creator-tool UI, neon glow accents, soft gradients, rounded cards, crisp typography, and music-led motifs.",
+  colors: {
+    background: "#0A0A0F",
+    surface: "#12131C",
+    surfaceLight: "#F5F5FA",
+    textPrimary: "#EEF2FF",
+    textMuted: "#A4AEC8",
+    electricViolet: "#835BFF",
+    magenta: "#FF4FB8",
+    cyan: "#5DE4FF",
+    coral: "#FF8F6B"
+  }
+};
+
 export default async function HomePage() {
-  const settings = await readLocalSettings();
-  const brand = await getBrandConfig();
   const canSaveApiKey = canPersistApiKeyLocally();
   const remoteAssets = usesRemoteAssets();
+  const settings = canSaveApiKey
+    ? await readLocalSettings()
+    : {
+        apiKey: process.env.OPENAI_API_KEY ?? "",
+        model: process.env.OPENAI_MODEL ?? "gpt-4o-mini"
+      };
+  const brand = deployedBrand;
 
   return (
     <AppShell

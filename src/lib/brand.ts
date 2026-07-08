@@ -65,3 +65,4 @@ export async function getBrandConfig() {
   const content = await fs.readFile(configPath, "utf8");
   return JSON.parse(content) as BrandConfig;
 }
+}

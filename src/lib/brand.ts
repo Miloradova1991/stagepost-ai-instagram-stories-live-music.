@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import { BRAND_CONFIG_PATH } from "@/lib/constants";
 import { fileExists, resolveProjectPath } from "@/lib/fs-utils";
+import { isHostedDeployment } from "@/lib/runtime";
 import type { BrandConfig } from "@/lib/types";
 
 const defaultBrandConfig: BrandConfig = {
@@ -37,6 +38,10 @@ const defaultBrandConfig: BrandConfig = {
 };
 
 export async function ensureBrandConfig() {
+  if (isHostedDeployment()) {
+    return;
+  }
+
   const configPath = resolveProjectPath(BRAND_CONFIG_PATH);
   const exists = await fileExists(configPath);
   if (!exists) {
@@ -45,6 +50,16 @@ export async function ensureBrandConfig() {
 }
 
 export async function getBrandConfig() {
+  if (isHostedDeployment()) {
+    try {
+      const configPath = resolveProjectPath(BRAND_CONFIG_PATH);
+      const content = await fs.readFile(configPath, "utf8");
+      return JSON.parse(content) as BrandConfig;
+    } catch {
+      return defaultBrandConfig;
+    }
+  }
+
   await ensureBrandConfig();
   const configPath = resolveProjectPath(BRAND_CONFIG_PATH);
   const content = await fs.readFile(configPath, "utf8");

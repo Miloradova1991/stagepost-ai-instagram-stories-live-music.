@@ -49,11 +49,3 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ message }, { status: 400 });
   }
 }
-    await saveGeneratedContent(generation.id, draft);
-
-    return NextResponse.json({ id: generation.id });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to generate content.";
-    return NextResponse.json({ message }, { status: 400 });
-  }
-}
